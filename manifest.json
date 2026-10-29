@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Hinglish Reader",
+  "version": "0.1.0",
+  "description": "Web pages aur PDFs ko Gen-Z style Hinglish (Roman-script Hindi) me padho. Bina kisi cost ke.",
+  "permissions": ["activeTab", "scripting", "storage", "contextMenus"],
+  "host_permissions": [
+    "https://translate.googleapis.com/*",
+    "https://generativelanguage.googleapis.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "options.html",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["reader.html", "vendor/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

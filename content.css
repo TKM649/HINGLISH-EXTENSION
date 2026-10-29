@@ -1,0 +1,53 @@
+/* content.css — page ke andar dikhne wala status icon.
+   `all: initial` zaroori hai — warna host page ki CSS isse tod deti hai. */
+
+.hinglish-status-pill {
+  all: initial;
+  position: fixed;
+  bottom: 18px;
+  right: 18px;
+  z-index: 2147483647;
+  display: grid;
+  place-items: center;
+  height: 32px;
+  padding: 0 14px;
+  box-sizing: border-box;
+  border-radius: 16px;
+  background: #4f46e5;
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.28);
+  transition: transform 0.14s ease, box-shadow 0.14s ease, background 0.14s ease;
+}
+
+.hinglish-status-pill:hover {
+  background: #4338ca;
+  transform: scale(1.08);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.34);
+}
+
+/* Busy state — kaam chal raha hai. Bina iske pata hi nahi chalta tha ki
+   extension zinda hai ya atak gaya. */
+.hinglish-status-pill.hinglish-busy {
+  animation: hinglish-pulse 1.1s ease-in-out infinite;
+}
+
+@keyframes hinglish-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+/* Warning state — basic (Google Translate) mode chal raha hai. Saaf dikhna
+   chahiye, warna lagta hai extension hi kharab hai. Exact wajah tooltip me. */
+.hinglish-status-pill.hinglish-warn { background: #b45309; }
+.hinglish-status-pill.hinglish-warn:hover { background: #92400e; }
+
+/* Translated blocks ko chhoti si visual pehchaan (optional, subtle) */
+.hinglish-done {
+  transition: background-color 0.4s ease;
+}

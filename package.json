@@ -1,0 +1,12 @@
+{
+  "name": "hinglish-reader-devtools",
+  "private": true,
+  "description": "SIRF automated testing ke liye. Shipped extension (manifest.json) ka isse koi lena-dena nahi — wo bina kisi build/dependency ke chalta hai. Yeh sirf `node test/*.test.mjs` chalane ke liye jsdom deta hai.",
+  "type": "module",
+  "devDependencies": {
+    "jsdom": "^24.0.0"
+  },
+  "scripts": {
+    "test": "node test/run-all.mjs"
+  }
+}

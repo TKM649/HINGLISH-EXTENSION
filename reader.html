@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hinglish Reader</title>
+  <link rel="stylesheet" href="ui.css" />
+  <script src="reader-theme.js"></script>
+  <style>
+    /* ---------- Themes (toggle button se) ----------
+       :root[data-theme] ki specificity ui.css ke :root se zyada hai, isliye
+       system dark/light kuch bhi ho, chuna hua theme hi lagta hai. */
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #131519;
+      --surface: #1a1d23;
+      --surface-2: #22262e;
+      --border: #2a2e37;
+      --border-strong: #3a3f4a;
+      --text: #edeef1;
+      --muted: #9aa1ad;
+      --faint: #6b7280;
+      --accent: #6366f1;
+      --accent-hover: #7c7ff3;
+      --accent-soft: #1e1b3a;
+      --danger: #f87171;
+      --danger-soft: #2a1415;
+      --danger-border: #5c2224;
+      --shadow-sm: none;
+      --shadow-md: none;
+      --popover-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    }
+    /* Solarized light: base3 kagaz, base01 text (base00 #657b83 body ke liye
+       sirf 4.1:1 tha — AA se kam — isliye ek shade gehra). */
+    :root[data-theme="solarized"] {
+      color-scheme: light;
+      --bg: #fdf6e3;
+      --surface: #f5eedb;
+      --surface-2: #eee8d5;
+      --border: #e6dfc8;
+      --border-strong: #d6ceb5;
+      /* 29 Oct 2026: solarized grey (#3c4f56) padhne me halka lagta tha — text kaala */
+      --text: #111111;
+      --heading: #000000;
+      /* Naapa: #657b83 = 4.13:1, #8a9a9b = 2.71:1 (dono kam). Ab 4.99 aur 3.83. */
+      --muted: #586e75;
+      --faint: #6f8082;
+      --accent: #1f6fa8;
+      --accent-hover: #185d8f;
+      --accent-soft: #eee8d5;
+      --danger: #b0281f;
+      --danger-soft: #fbe9e1;
+      --danger-border: #ecc3b6;
+      --shadow-sm: 0 1px 2px rgba(88, 110, 117, 0.08);
+      --shadow-md: 0 1px 3px rgba(88, 110, 117, 0.12);
+      --ring: 0 0 0 3px rgba(31, 111, 168, 0.22);
+      --popover-shadow: 0 12px 32px rgba(88, 110, 117, 0.22);
+    }
+    /* Reader-specific layer on top of ui.css tokens. Page ka body 13px (ui.css)
+       toolbar ke liye hai; padhne wala hissa apna serif size leta hai. */
+    :root {
+      --read-font: Charter, "Bitstream Charter", "Sitka Text", "Iowan Old Style", Cambria, Georgia, serif;
+      --bar-h: 52px;
+    }
+
+    body { min-height: 100dvh; }
+
+    /* ---------- Toolbar ---------- */
+    .bar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: var(--bar-h);
+      padding: 8px 16px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+    .bar[hidden] { display: none; }
+    .bar-left { display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1; }
+    .bar-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+
+    .chapter-now {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border: 1px solid var(--border-strong);
+      background: var(--bg);
+      color: var(--text);
+    }
+    .icon-btn:hover:not(:disabled) { background: var(--surface); }
+    .icon-btn svg { width: 16px; height: 16px; }
+
+    .pager { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 13px; }
+    .pager input {
+      width: 64px;
+      height: 36px;
+      padding: 0 8px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    .pager input::-webkit-inner-spin-button,
+    .pager input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    .pager input { -moz-appearance: textfield; }
+    .pager .lbl { white-space: nowrap; }
+    .pager .of { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+    .status {
+      font-size: 12px;
+      color: var(--muted);
+      max-width: 280px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .status.warn { color: var(--danger); }
+    .status:empty { display: none; }
+
+    /* ---------- Contents dropdown ---------- */
+    .toc-wrap { position: relative; flex-shrink: 0; }
+    .toc-btn svg { width: 14px; height: 14px; transition: transform 0.15s ease; }
+    .toc-btn[aria-expanded="true"] svg { transform: rotate(180deg); }
+
+    .toc {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      width: min(420px, calc(100vw - 32px));
+      max-height: min(70vh, 560px);
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--r-lg);
+      box-shadow: var(--popover-shadow, 0 12px 32px rgba(16, 24, 40, 0.16));
+      overflow: hidden;
+      transform-origin: top left;
+      animation: toc-in 0.14s ease-out;
+    }
+    .toc[hidden] { display: none; }
+    @keyframes toc-in { from { opacity: 0; transform: translateY(-4px) scale(0.98); } }
+    @media (prefers-reduced-motion: reduce) {
+      .toc { animation: none; }
+      .toc-btn svg { transition: none; }
+    }
+
+    .toc-search { padding: 10px; border-bottom: 1px solid var(--border); }
+    .toc-list { overflow-y: auto; padding: 6px; margin: 0; list-style: none; }
+    .toc-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: baseline;
+      gap: 12px;
+      width: 100%;
+      min-height: 36px;
+      padding: 8px 10px;
+      border: 0;
+      border-radius: var(--r-md);
+      background: transparent;
+      color: var(--text);
+      font: inherit;
+      font-size: 13px;
+      line-height: 1.4;
+      text-align: left;
+      cursor: pointer;
+      position: relative;
+    }
+    .toc-item:hover:not(:disabled) { background: var(--surface-2); }
+    .toc-item:focus-visible { outline: none; box-shadow: var(--ring); }
+    .toc-item:disabled { color: var(--faint); cursor: not-allowed; }
+    .toc-item .pg { color: var(--faint); font-variant-numeric: tabular-nums; font-size: 12px; }
+    /* Aap abhi kis chapter me hain — accent patti + soft background */
+    .toc-item.current { background: var(--accent-soft); font-weight: 600; }
+    .toc-item.current::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 8px;
+      bottom: 8px;
+      width: 3px;
+      border-radius: 2px;
+      background: var(--accent);
+    }
+    .toc-item.current .pg { color: var(--accent); }
+    .toc-goto { font-weight: 600; color: var(--accent); }
+    .toc-goto[hidden] { display: none; }
+    .toc-source { padding: 8px 14px 0; color: var(--faint); font-size: 11.5px; }
+    .toc-source:empty { display: none; }
+    .toc-empty { padding: 18px 14px; color: var(--muted); font-size: 13px; line-height: 1.55; }
+
+    /* ---------- Open screen ---------- */
+    .drop {
+      max-width: 560px;
+      margin: 12vh auto 0;
+      padding: 40px 32px;
+      border: 1.5px dashed var(--border-strong);
+      border-radius: var(--r-lg);
+      text-align: center;
+      background: var(--surface);
+    }
+    .drop.dragover { border-color: var(--accent); background: var(--accent-soft); }
+    .drop h1 { margin: 0 0 8px; font-size: 18px; font-weight: 600; }
+    .drop p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+    .drop .btn { margin-top: 20px; }
+    .drop input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; }
+
+    .notice-box { max-width: 640px; margin: 40px auto; }
+    .notice-box[hidden] { display: none; }
+
+    /* ---------- Reading area ---------- */
+    .reading {
+      max-width: 68ch;
+      margin: 0 auto;
+      padding: 40px 24px 120px;
+      font-family: var(--read-font);
+      font-size: 19px;
+      line-height: 1.7;
+      color: var(--text);
+    }
+    .reading[hidden] { display: none; }
+    .reading p { margin: 0 0 1em; }
+    .reading h2, .reading h3 {
+      font-family: var(--read-font);
+      color: var(--heading, var(--text));
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: -0.005em;
+      margin: 1.6em 0 0.6em;
+    }
+    .reading h2 { font-size: 1.6em; }
+    .reading h3 { font-size: 1.22em; }
+    .reading > :first-child, .page > :first-child { margin-top: 0; }
+    .reading .center { text-align: center; }
+    .reading .indent { padding-left: 2em; }
+    .reading .num { color: var(--faint); font-size: 0.8em; }
+
+    .page-notice {
+      font-family: var(--font);
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 14px 16px;
+    }
+    .loading { color: var(--faint); font-family: var(--font); font-size: 13px; }
+
+    /* Dark me "sun" dikhe (light pe jaane ke liye), Solarized me "moon" */
+    :root[data-theme="dark"] #themeIconMoon,
+    :root:not([data-theme="dark"]) #themeIconSun { display: none; }
+
+    @media (max-width: 640px) {
+      .pager .lbl { display: none; }
+      .bar { flex-wrap: wrap; padding: 8px 12px; }
+      .bar-left { flex-basis: 100%; }
+      .bar-right { flex: 1; justify-content: space-between; }
+      .status { display: none; }
+      .reading { font-size: 18px; padding: 24px 16px 96px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="bar" id="bar" hidden>
+    <div class="bar-left">
+      <div class="toc-wrap">
+        <button class="btn btn-secondary toc-btn" id="tocBtn" aria-expanded="false" aria-controls="toc">
+          Contents
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="toc" id="toc" hidden>
+          <div class="toc-search">
+            <input class="input" id="tocFilter" type="search" placeholder="Search chapter or type a page number" aria-label="Search chapter or type a page number" autocomplete="off" />
+          </div>
+          <p class="toc-source" id="tocSource"></p>
+          <button type="button" class="toc-item toc-goto" id="tocGoto" hidden></button>
+          <ul class="toc-list" id="tocList"></ul>
+        </div>
+      </div>
+      <span class="chapter-now" id="chapterNow"></span>
+    </div>
+    <div class="bar-right">
+      <div class="pager">
+        <button class="btn icon-btn" id="prevBtn" aria-label="Previous page" title="Previous page (←)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M10 4L6 8l4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <label class="lbl" for="pageInput">Page</label>
+        <input class="input" id="pageInput" type="number" min="1" inputmode="numeric" title="Type a page number and press Enter" />
+        <span class="of" id="pageTotal"></span>
+        <button class="btn icon-btn" id="nextBtn" aria-label="Next page" title="Next page (→)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M6 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <button class="btn icon-btn" id="themeBtn" type="button" aria-label="Switch theme">
+        <svg id="themeIconSun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1" stroke-linecap="round"/></svg>
+        <svg id="themeIconMoon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M13.5 9.5A5.5 5.5 0 0 1 6.5 2.5a5.5 5.5 0 1 0 7 7z" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="btn btn-ghost" id="restoreBtn" disabled>Show original</button>
+      <span class="status" id="statusBar" role="status" aria-live="polite"></span>
+    </div>
+  </header>
+
+  <div class="drop" id="dropZone">
+    <h1>Open a PDF</h1>
+    <p>Drop a PDF here, or choose one from your computer.<br />Only PDFs with selectable text work. Scanned pages can't be converted.</p>
+    <label class="btn btn-primary" for="fileInput">Choose PDF</label>
+    <input type="file" id="fileInput" accept="application/pdf" />
+  </div>
+
+  <div class="notice notice-box" id="errorNotice" role="alert" hidden></div>
+
+  <main class="reading" id="reading" hidden>
+    <div class="page" id="pageContent"></div>
+  </main>
+
+  <script type="module" src="reader.js"></script>
+</body>
+</html>
