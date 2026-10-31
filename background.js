@@ -7,6 +7,7 @@
 import { hinglishify } from "./hinglishify.js";
 import { getCached, setCached } from "./cache.js";
 import { SYSTEM_INSTRUCTION, RESPONSE_SCHEMA, buildPrompt, parseGeminiResponse } from "./gemini.js";
+import { checkSafety } from "./safety.js";
 
 const GOOGLE_ENDPOINT = "https://translate.googleapis.com/translate_a/single";
 const SPLIT_MARKER = "zzsplitzz"; // segments ko join karne ka marker — live-tested,
@@ -17,8 +18,26 @@ const SPLIT_MARKER = "zzsplitzz"; // segments ko join karne ka marker — live-t
 // Batching note (live testing se pata chala): repeated `q=a&q=b` params
 // KAAM NAHI KARTE — Google sirf akhri q translate karta hai. Isliye saare
 // segments ko ek hi `q` me SPLIT_MARKER se jodte hain, phir wapas split karte hain.
-async function translateGoogleRaw(texts) {
+// Agar split count match nahi karta (Google ne marker ko translate/tod diya —
+// live dekha: PDF me aadhe sentence pe tooti lines "plan on zzsplitzz Sunday
+// night" ko Google jod deta hai), to pehle poori batch fail ho jaati thi aur
+// Basic mode me poora page English reh jaata tha. Ab batch ko aadha-aadha karke
+// dobara bhejte hain; akela segment bhi fail ho tabhi null (caller original
+// text pe rehta hai). Google Translate free hai, extra requests ka quota nahi.
+export async function translateGoogleRaw(texts) {
   if (texts.length === 0) return [];
+  const parts = await translateGoogleJoined(texts);
+  if (parts) return parts;
+  if (texts.length === 1) return [null];
+  const mid = Math.ceil(texts.length / 2);
+  const [left, right] = await Promise.all([
+    translateGoogleRaw(texts.slice(0, mid)),
+    translateGoogleRaw(texts.slice(mid)),
+  ]);
+  return [...left, ...right];
+}
+
+async function translateGoogleJoined(texts) {
 
   const joined = texts.join(` ${SPLIT_MARKER} `);
 
@@ -39,11 +58,8 @@ async function translateGoogleRaw(texts) {
   const romanized = extractRomanization(data);
   const parts = romanized.split(SPLIT_MARKER).map((p) => p.trim());
 
-  // Agar split count match nahi karta (Google ne marker ko translate/tod diya),
-  // to null return karo har jagah — caller original text pe fallback karega.
-  if (parts.length !== texts.length) {
-    return texts.map(() => null);
-  }
+  // Split count match nahi = yeh batch bharose layak nahi (upar wala caller tod ke retry karega)
+  if (parts.length !== texts.length || parts.some((p) => !p)) return null;
   return parts;
 }
 
@@ -492,7 +508,7 @@ if (typeof chrome !== "undefined" && chrome.runtime?.onInstalled) {
   chrome.runtime.onInstalled.addListener(() => {
     chrome.contextMenus.create({
       id: "hinglish-selection",
-      title: "Hinglish me padho",
+      title: "Read in Hinglish",
       contexts: ["selection"],
     });
   });
@@ -500,6 +516,9 @@ if (typeof chrome !== "undefined" && chrome.runtime?.onInstalled) {
   chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     if (info.menuItemId !== "hinglish-selection" || !info.selectionText || !tab?.id) return;
     try {
+      // Right-click wala rasta bhi wahi safety gate se guzre jo popup lagata hai —
+      // pehle yeh bank/login/"is site pe off" sab pe chal jaata tha.
+      if (!(await isTabAllowed(tab))) return;
       const { results } = await handleTranslateBatch({
         segments: [{ id: "sel", text: info.selectionText }],
       });
@@ -514,6 +533,29 @@ if (typeof chrome !== "undefined" && chrome.runtime?.onInstalled) {
       console.warn("Selection translate failed:", err);
     }
   });
+}
+
+// popup.js ke computeSafety() jaisa hi gate. Password check fail/timeout ho to
+// "password field hai" maano (fail closed) — sirf auth-jaise URL pe asar padta hai.
+async function isTabAllowed(tab) {
+  if (!tab.url || !/^https?:/.test(tab.url)) return false;
+  const { perSiteOff } = await chrome.storage.local.get("perSiteOff");
+  let hasPasswordField = true;
+  try {
+    const [res] = await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: () => !!document.querySelector('input[type="password"]'),
+    });
+    hasPasswordField = !!res?.result;
+  } catch {
+    // inject nahi hua — safe side pe raho
+  }
+  return checkSafety({
+    url: tab.url,
+    hostname: new URL(tab.url).hostname,
+    hasPasswordField,
+    perSiteOff: perSiteOff || [],
+  }).allowed;
 }
 
 // Page context me chalta hai (executeScript ke through) — isliye self-contained

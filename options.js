@@ -24,7 +24,13 @@ async function renderUsage() {
   const today = new Date().toISOString().slice(0, 10);
   const count = geminiUsage?.date === today ? geminiUsage.count : 0;
   const model = geminiModelCache?.model || "not selected yet";
-  el.innerHTML = `<b>${count} ${count === 1 ? "request" : "requests"}</b> used today · Model: <code>${model}</code>`;
+  // innerHTML nahi: model ka naam Google ke API/storage se aata hai — privileged
+  // page pe bahar ka text kabhi HTML ki tarah parse nahi hona chahiye.
+  const b = document.createElement("b");
+  b.textContent = `${count} ${count === 1 ? "request" : "requests"}`;
+  const code = document.createElement("code");
+  code.textContent = model;
+  el.replaceChildren(b, " used today · Model: ", code);
 }
 
 document.getElementById("saveKey").addEventListener("click", async () => {

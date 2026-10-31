@@ -61,6 +61,8 @@
 
   function enable() {
     enabled = true;
+    // Pichli baar fail hui batches ko dobara mauka do.
+    for (const seg of segments.values()) if (seg.status === "error") seg.status = "pending";
     ensureStatusPill();
     setStatus("Looking for text to convert…", "Starting…", true);
     collectSegments();
@@ -73,6 +75,13 @@
     if (intersectionObserver) {
       intersectionObserver.disconnect();
       intersectionObserver = null;
+    }
+    // Queue me pade segments ko wapas "pending" karo. Pehle yeh "queued" hi
+    // reh jaate the (observer unhe chhod chuka tha), to dobara ON karne pe woh
+    // paragraph hamesha English rehte.
+    for (const id of pendingQueue) {
+      const seg = segments.get(id);
+      if (seg?.status === "queued") seg.status = "pending";
     }
     pendingQueue = [];
     if (flushTimer) {
@@ -376,6 +385,9 @@
           const seg = segments.get(id);
           if (seg) seg.status = "error";
         }
+        // Fail hui batch bhi "khatam" hai — warna counter kabhi poora nahi hota
+        // aur pill hamesha "Converting…" dikhata.
+        totalDone += batchIds.length;
         setStatus(`Error: ${err.message || err}`, "Error", false);
       })
       .finally(() => {
@@ -391,6 +403,13 @@
       for (const { id, text, ok } of results) {
         const seg = segments.get(id);
         if (!seg) continue;
+        // User ne beech me OFF kar diya — ab page mat badlo. Segment wapas
+        // "pending" taaki agli baar ON karne pe translate ho (cache se, free).
+        if (!enabled) {
+          seg.status = "pending";
+          totalQueued--;
+          continue;
+        }
         seg.status = "done";
         totalDone++;
         // Translation fail hui (ok:false), kuch badla hi nahi, ya site ne is
@@ -588,7 +607,7 @@
       const quotaExhausted = /quota|429|exceeded/i.test(warningDetail || "");
       setStatus(
         quotaExhausted
-          ? "Daily Gemini limit reached — resets at 12:30 AM. Using basic mode."
+          ? `Daily Gemini limit reached — resets around ${quotaResetTime()}. Using basic mode.`
           : `Gemini unavailable (${warningDetail || "error"}) — using basic mode`,
         quotaExhausted ? "Limit reached" : "Basic mode",
         busy
@@ -611,14 +630,37 @@
     }
   }
 
+  // Google ki daily limit midnight Pacific time pe reset hoti hai (Gemini docs).
+  // Woh waqt user ke apne local time me dikhao — "12:30 AM" hardcode galat tha
+  // (India me yeh 12:30/1:30 PM hota hai, aur baaki deshon me kuch aur).
+  function quotaResetTime() {
+    try {
+      const now = new Date();
+      const parts = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/Los_Angeles", hourCycle: "h23",
+        hour: "numeric", minute: "numeric", second: "numeric",
+      }).formatToParts(now);
+      const get = (type) => Number(parts.find((p) => p.type === type)?.value || 0);
+      const sinceMidnight = ((get("hour") * 60 + get("minute")) * 60 + get("second")) * 1000;
+      const reset = new Date(now.getTime() + 24 * 60 * 60 * 1000 - sinceMidnight);
+      return reset.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    } catch {
+      return "midnight Pacific time";
+    }
+  }
+
   // ---- Dynamic content (naye elements jo baad me DOM me aate hain) ----
   let mutationObserver = null;
   let mutationTimer = null;
 
   function setupMutationObserver() {
     if (mutationObserver) return;
-    mutationObserver = new MutationObserver(() => {
+    mutationObserver = new MutationObserver((records) => {
       if (mutationTimer) return; // already scheduled — throttled
+      // Hamare apne render (translated node ke andar) aur status pill ke badlaav
+      // pe poora page dobara scan mat karo — pehle har translated batch ek full
+      // rescan (har node pe getComputedStyle) trigger karta tha.
+      if (records.every(isOwnMutation)) return;
       mutationTimer = setTimeout(() => {
         mutationTimer = null;
         if (!enabled) return;
@@ -629,6 +671,11 @@
     mutationObserver.observe(document.body, { childList: true, subtree: true });
   }
 
+  function isOwnMutation(record) {
+    const target = record.target.nodeType === 1 ? record.target : record.target.parentElement;
+    return !!target?.closest("[data-hl-id], .hinglish-status-pill") || target === statusPill;
+  }
+
   function observeNewPendingSegments() {
     if (!intersectionObserver) return;
     for (const seg of segments.values()) {
@@ -637,28 +684,19 @@
   }
 
   // ---- SPA navigation (pushState/replaceState wale sites) ----
-  // MutationObserver zyadatar DOM-swap SPA changes pakad leta hai, lekin route
-  // change ke turant baad content render hone me thoda time lagta hai — isliye
-  // ek explicit hook bhi rakha hai, safety ke liye.
+  // Route change pe naya content DOM me aata hai, jise MutationObserver pakad
+  // leta hai. Pehle yahan history.pushState ko patch kiya tha, par content
+  // script "isolated world" me chalti hai — page ka apna router asli (bina
+  // patch wala) pushState call karta hai, isliye woh hook kabhi chalta hi nahi
+  // tha. Back/forward (popstate) dono worlds me aata hai, wahi rakha hai.
   function setupSpaHook() {
-    const fireRecheck = () => {
+    window.addEventListener("popstate", () => {
       if (!enabled) return;
       setTimeout(() => {
         collectSegments();
         observeNewPendingSegments();
       }, 400);
-    };
-    const origPushState = history.pushState;
-    const origReplaceState = history.replaceState;
-    history.pushState = function (...args) {
-      origPushState.apply(this, args);
-      fireRecheck();
-    };
-    history.replaceState = function (...args) {
-      origReplaceState.apply(this, args);
-      fireRecheck();
-    };
-    window.addEventListener("popstate", fireRecheck);
+    });
   }
 
   // ---- Messages from popup (status query, restore) ----

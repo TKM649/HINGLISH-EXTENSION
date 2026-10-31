@@ -49,6 +49,10 @@ inside the page's CORS context and can't `fetch` these endpoints).
   structurally incapable of producing Gen-Z Hinglish — it yields
   "adhikansh log" style output no matter how large the glossary grows. Treat it
   as a degraded mode, not an equal alternative.
+  Mode A joins a batch into one request with a split marker. If Google eats a
+  marker (it does when a sentence is split across segments, common in PDFs),
+  `translateGoogleRaw()` halves the batch and retries instead of failing all of
+  it; only a segment that fails on its own comes back `null`.
 
 `handleTranslateBatch()` picks the mode and always returns a `warning` field
 (`"no-key"` / `"gemini-failed"`) alongside results. The fallback is deliberately
@@ -94,9 +98,17 @@ tests the override when one is set.
    (listeners/React props survive); unbalanced markers fall back to plain text
    with images/icons kept on their original side. `ok:false`, unchanged output,
    or text the site changed meanwhile → the node is not touched.
-3. An IntersectionObserver with a 1500px root margin queues segments ahead of
-   the viewport. Batches flush on a 250ms debounce, capped at 60 segments /
-   12000 chars — tuned to minimize requests against the free quota.
+3. An IntersectionObserver with a 1200px root margin queues segments ahead of
+   the viewport. Batches flush on a 100ms debounce, capped at 20 segments /
+   4000 chars, with up to 3 batches in flight. Small parallel batches put the
+   first paragraph on screen in seconds instead of one 30-50s mega-request.
+   Turning off puts queued segments back to `pending`, and results that arrive
+   after turning off are not rendered (they come back from cache next time).
+   New content (lazy load, SPA routes) is picked up by a MutationObserver that
+   ignores mutations inside `[data-hl-id]` nodes and the status pill, so our
+   own renders don't trigger full-page rescans. Don't patch
+   `history.pushState`: content scripts run in an isolated world, so the
+   page's router never calls the patched copy.
 4. Results are written back into the DOM; `restore()` puts the exact original
    child node objects back (only for segments actually rendered) and strips
    every attribute the extension added.
@@ -116,6 +128,14 @@ injection is what actually enforces the rules. Banking/payment hosts are hard-
 blocked. Login pages need **both** an auth-looking URL and a password field
 present (either alone caused too many false positives).
 
+The right-click "Read in Hinglish" menu runs the same `checkSafety()` in
+`background.js` (`isTabAllowed()`), failing closed on the password check.
+
+`reader.html` and `vendor/` are deliberately **not** `web_accessible_resources`:
+the popup opens the reader with `chrome.tabs.create`, which doesn't need it, and
+exposing it let any website iframe `reader.html?src=…` and spend the user's
+Gemini quota.
+
 ### Cache
 
 `cache.js` keeps everything in an in-memory `Map` with a debounced 3s write to
@@ -124,6 +144,9 @@ caused 60+ storage round-trips per batch and visibly hung pages. Keys are
 mode-prefixed (`A:` / `B2:`) so the two modes never share entries. The number
 after `B` is the prompt version: bump it whenever `SYSTEM_INSTRUCTION` changes
 tone (Oct 2026: moved to "aap" form), or old cached output keeps showing.
+Storage keys are a 53-bit cyrb53 hash of that string. The old 32-bit djb2
+hash had a real chance of two paragraphs sharing a key, which shows the wrong
+translation.
 
 ## Tone
 
