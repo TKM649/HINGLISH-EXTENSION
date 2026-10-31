@@ -2,7 +2,7 @@
   "name": "hinglish-reader-devtools",
   "private": true,
   "license": "GPL-3.0-only",
-  "description": "SIRF automated testing ke liye. Shipped extension (manifest.json) ka isse koi lena-dena nahi — wo bina kisi build/dependency ke chalta hai. Yeh sirf `node test/*.test.mjs` chalane ke liye jsdom deta hai.",
+  "description": "Development tooling only (jsdom for the Node test suite). The shipped extension has no build step and no runtime dependencies.",
   "type": "module",
   "devDependencies": {
     "jsdom": "^24.0.0"

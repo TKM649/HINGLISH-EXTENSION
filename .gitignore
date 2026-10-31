@@ -3,3 +3,6 @@ graphify-out/
 .env
 .env.*
 *.log
+
+# Session notes (private, kabhi commit nahi)
+NEXT.md
