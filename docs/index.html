@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hinglish Reader | Read the internet in Hinglish</title>
+  <meta name="description" content="Free Chrome extension that turns any English web page or PDF into easy, everyday Hinglish. Powered by Google Gemini.">
+  <meta property="og:title" content="Hinglish Reader">
+  <meta property="og:description" content="Free Chrome extension that turns any English web page or PDF into easy, everyday Hinglish. Powered by Google Gemini.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://tkm649.github.io/HINGLISH-EXTENSION/">
+  <meta property="og:image" content="https://tkm649.github.io/HINGLISH-EXTENSION/images/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%234f46e5'/><text x='16' y='23' text-anchor='middle' font-family='Arial' font-weight='800' font-size='19' fill='white'>H</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:        #0f0b2e;
+      --navy-mid:    #17124a;
+      --teal:        #a5b4fc;
+      --accent:      #4f46e5;
+      --accent-2:    #7c3aed;
+      --off-white:   #f7f7fb;
+      --text-muted:  rgba(247, 247, 251, 0.7);
+      --card-bg:     #ffffff;
+      --card-text:   #1f2937;
+      --card-label:  #6b7280;
+      --ok:          #34d399;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: radial-gradient(ellipse 900px 600px at 50% -10%, var(--navy-mid), var(--navy) 70%);
+      background-color: var(--navy);
+      color: var(--off-white);
+      overflow-x: hidden;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+    }
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(40px, 8vw, 80px) 16px;
+    }
+    .wrap { width: 100%; max-width: 760px; text-align: center; }
+
+    .brand { display: inline-flex; align-items: center; gap: 10px; margin-bottom: clamp(24px, 4vw, 36px); font-weight: 700; font-size: 17px; }
+    .logo { width: 36px; height: 36px; border-radius: 10px; background: var(--accent); display: grid; place-items: center; font-weight: 800; color: #fff; }
+
+    h1 { font-weight: 800; font-size: clamp(34px, 7vw, 64px); line-height: 1.08; letter-spacing: -0.02em; }
+    h1 span { background: linear-gradient(90deg, #a5b4fc, #c4b5fd); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .sub { margin: 18px auto 0; max-width: 560px; color: var(--text-muted); font-size: clamp(15px, 2vw, 18px); line-height: 1.55; }
+
+    .demo {
+      margin: clamp(28px, 5vw, 44px) auto 0;
+      background: var(--card-bg);
+      color: var(--card-text);
+      border-radius: 16px;
+      padding: 22px 24px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 18px;
+      align-items: center;
+      text-align: left;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+    }
+    .label { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: var(--card-label); margin-bottom: 6px; }
+    .label.hl { color: var(--accent); }
+    .demo p { font-size: clamp(15px, 1.8vw, 17px); line-height: 1.5; }
+    .arrow { color: var(--accent); font-size: 22px; }
+    @media (max-width: 600px) {
+      .demo { grid-template-columns: 1fr; }
+      .arrow { transform: rotate(90deg); justify-self: center; }
+    }
+
+    .btn-primary {
+      display: inline-block;
+      margin-top: clamp(28px, 5vw, 40px);
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff;
+      padding: 16px 42px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: clamp(15px, 1.8vw, 17px);
+      text-decoration: none;
+      box-shadow: 0 10px 30px rgba(79, 70, 229, 0.45);
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(79, 70, 229, 0.6); }
+    .btn-primary:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
+
+    .chips { margin-top: 16px; color: var(--text-muted); font-size: 14px; }
+    .chips b { color: var(--ok); font-weight: 600; }
+
+    footer { text-align: center; padding: 20px 16px 28px; color: var(--text-muted); font-size: 13px; }
+    footer a { color: var(--teal); }
+
+    @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    .rise { animation: rise 0.7s ease-out both; }
+    .d1 { animation-delay: 0.08s; } .d2 { animation-delay: 0.18s; } .d3 { animation-delay: 0.3s; } .d4 { animation-delay: 0.42s; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="wrap">
+      <div class="brand rise"><span class="logo" aria-hidden="true">H</span> Hinglish Reader</div>
+
+      <h1 class="rise d1">Read the internet<br>in <span>Hinglish.</span></h1>
+      <p class="sub rise d2">Turn any English web page or PDF into easy, everyday Hinglish with one click. Powered by Google Gemini.</p>
+
+      <div class="demo rise d3" role="figure" aria-label="Example: an English sentence and its Hinglish version">
+        <div>
+          <div class="label">ENGLISH</div>
+          <p>Most people use ChatGPT like a search box. They type a question, get an answer, and move on.</p>
+        </div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div>
+          <div class="label hl">HINGLISH</div>
+          <p>Zyadatar log ChatGPT ko ek search box ki tarah use karte hain. Woh question type karte hain, answer lete hain, aur aage badh jaate hain.</p>
+        </div>
+      </div>
+
+      <div class="rise d4">
+        <a class="btn-primary" href="https://github.com/TKM649/HINGLISH-EXTENSION#install-in-5-minutes">Install free for Chrome</a>
+        <p class="chips"><b>✓</b> Free &nbsp;·&nbsp; <b>✓</b> No credit card &nbsp;·&nbsp; <b>✓</b> One click to undo</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    Open source on <a href="https://github.com/TKM649/HINGLISH-EXTENSION">GitHub</a> · Made in India
+  </footer>
+</body>
+</html>
