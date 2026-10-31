@@ -32,7 +32,7 @@
 
 ## Features
 
-- **Natural Hinglish, powered by Google Gemini.** Sounds the way people actually talk and text, and always addresses you respectfully as "aap".
+- **Natural Hinglish, powered by Google Gemini.** Sounds the way people actually talk and text.
 - **Web pages.** Convert any English article, blog or news page. Links, bold text and images stay where they were.
 - **PDF books.** Drop in a PDF and read it page by page, with a Contents menu, dark mode, and your last page remembered.
 - **Right-click.** Select any text, right-click, and choose **Read in Hinglish**.
