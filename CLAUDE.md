@@ -11,6 +11,12 @@ Roman-script Gen-Z Hinglish. Loaded unpacked from this folder.
 loads. `package.json` exists only to provide `jsdom` for the Node test suite —
 the shipped extension has zero runtime dependencies.
 
+## Public repository
+
+This repo is public. Never commit session notes, handoffs, personal details,
+marketing plans or promo assets. `NEXT.md` is gitignored on purpose: write
+handoffs there or hand them to the owner as a file, never push them.
+
 ## Commands
 
 ```bash
