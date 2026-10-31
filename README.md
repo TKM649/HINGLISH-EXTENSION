@@ -11,13 +11,13 @@
 
 <p align="center">
   <b>Read any English web page or PDF book in easy, everyday Hinglish.</b><br>
-  No account. No credit card. One click to convert, one click to go back.
+  Powered by Google Gemini. Free, no credit card. One click to convert, one click to go back.
 </p>
 
 <p align="center">
   <a href="#install-in-5-minutes">Install</a> ·
   <a href="#how-to-use">How to use</a> ·
-  <a href="#better-hinglish-with-a-free-gemini-key-optional">Gemini key</a> ·
+  <a href="#add-your-free-gemini-key-2-minutes">Gemini key</a> ·
   <a href="#privacy">Privacy</a> ·
   <a href="#troubleshooting">Troubleshooting</a>
 </p>
@@ -32,6 +32,7 @@
 
 ## Features
 
+- **Natural Hinglish, powered by Google Gemini.** Sounds the way people actually talk and text, and always addresses you respectfully as "aap".
 - **Web pages.** Convert any English article, blog or news page. Links, bold text and images stay where they were.
 - **PDF books.** Drop in a PDF and read it page by page, with a Contents menu, dark mode, and your last page remembered.
 - **Right-click.** Select any text, right-click, and choose **Read in Hinglish**.
@@ -41,7 +42,7 @@
 <table>
   <tr>
     <td width="32%" align="center"><img src="docs/images/popup.png" alt="Toolbar popup" width="260"><br><sub>Toolbar popup</sub></td>
-    <td width="68%" align="center"><img src="docs/images/pdf-reader.png" alt="PDF reader in dark mode" width="560"><br><sub>PDF reader, dark mode (Basic mode output, without a Gemini key)</sub></td>
+    <td width="68%" align="center"><img src="docs/images/pdf-reader.png" alt="PDF reader in dark mode" width="560"><br><sub>PDF reader, dark mode (illustration of Gemini-mode Hinglish)</sub></td>
   </tr>
 </table>
 
@@ -82,7 +83,11 @@ Hinglish Reader is not on the Chrome Web Store yet, so you install it once by ha
 
 ### Step 4: Pin it to your toolbar
 
-Click the puzzle icon 🧩 at the top-right of Chrome, then the pin 📌 next to **Hinglish Reader**. A purple **H** icon appears in your toolbar. You're done. ✅
+Click the puzzle icon 🧩 at the top-right of Chrome, then the pin 📌 next to **Hinglish Reader**. A purple **H** icon appears in your toolbar.
+
+### Step 5: Add your free Gemini key
+
+The Settings page opens by itself after install. Follow the [Gemini key steps below](#add-your-free-gemini-key-2-minutes) (about 2 minutes, no credit card). You're done. ✅
 
 ---
 
@@ -107,9 +112,9 @@ Select the text, right-click, and choose **Read in Hinglish**.
 
 ---
 
-## Better Hinglish with a free Gemini key (optional)
+## Add your free Gemini key (2 minutes)
 
-Without a key, Hinglish Reader uses **Basic mode** (Google Translate). Basic mode works, but it tends to produce formal, textbook Hindi. For **natural, conversational Hinglish**, add a free Google Gemini key. It takes about 2 minutes and needs no credit card.
+Hinglish Reader is built for Google Gemini. A free key is what gives you **natural, conversational Hinglish**. It takes about 2 minutes and needs no credit card.
 
 1. Click the **H** icon, then **Settings** (top-right).
 2. Open [aistudio.google.com/apikey](https://aistudio.google.com/apikey) and sign in with your Google account.
@@ -122,7 +127,8 @@ When you see **Everything works**, you're ready.
   <img src="docs/images/settings.png" alt="Settings page where you paste your Gemini key" width="560">
 </p>
 
-- **It stays free.** Free keys have no billing. If you reach the daily limit, the extension switches to Basic mode on its own, so pages never go blank.
+- **It stays free.** Free keys have no billing.
+- **Backup only.** If the key is missing or today's limit is used up, a limited Basic mode (Google Translate) keeps pages readable until Gemini is back. It sounds more formal, so keep your key added.
 - **Daily reset.** The limit resets at midnight Pacific time (around 12:30 PM or 1:30 PM in India). The extension shows the exact reset time in your own time zone.
 - **Keep your key private.** Never share it or post it online. It's stored only in Chrome on your computer.
 
@@ -161,7 +167,7 @@ To turn it off on any site: click the **H** icon, then **Disable on this site**.
 | "Manifest file is missing or unreadable" | You picked the wrong folder. Choose the one that contains `manifest.json` (see the tip in Step 3). |
 | The extension disappeared | The folder was moved or deleted. Repeat the install from Step 1. |
 | Nothing changed after clicking Convert | Reload the page and click **Convert to Hinglish** again. |
-| The corner button says "Basic mode" or "Limit reached" | No Gemini key, or today's free limit is used up. Basic mode keeps working until it resets. |
+| The corner button says "Basic mode" or "Limit reached" | No Gemini key yet (add it in Settings), or today's free limit is used up and it resets later today. |
 
 ## Updating
 
@@ -180,7 +186,6 @@ Open `chrome://extensions`, find Hinglish Reader, and click **Remove**. You can 
 ## Good to know
 
 - Not every sentence will be perfect, especially very technical or very long ones.
-- Basic mode (no key) will always sound more formal. Natural Hinglish needs a Gemini key.
 - Tested on desktop Google Chrome.
 
 Found a problem or have an idea? [Open an issue](https://github.com/TKM649/HINGLISH-EXTENSION/issues).

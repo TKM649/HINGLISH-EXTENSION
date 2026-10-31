@@ -505,12 +505,15 @@ if (typeof chrome !== "undefined" && chrome.runtime?.onMessage) {
 
 // ---- Right-click context menu: sirf selected text translate karo ----
 if (typeof chrome !== "undefined" && chrome.runtime?.onInstalled) {
-  chrome.runtime.onInstalled.addListener(() => {
+  chrome.runtime.onInstalled.addListener(({ reason }) => {
     chrome.contextMenus.create({
       id: "hinglish-selection",
       title: "Read in Hinglish",
       contexts: ["selection"],
     });
+    // Asli Hinglish sirf Gemini key se aati hai — pehli install pe seedha
+    // Settings kholo taaki naya user Basic mode ko hi "product" na samajh le.
+    if (reason === "install") chrome.runtime.openOptionsPage();
   });
 
   chrome.contextMenus.onClicked.addListener(async (info, tab) => {

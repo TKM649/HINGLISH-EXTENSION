@@ -54,6 +54,11 @@ inside the page's CORS context and can't `fetch` these endpoints).
   `translateGoogleRaw()` halves the batch and retries instead of failing all of
   it; only a segment that fails on its own comes back `null`.
 
+Gemini is the product; Basic mode is only a backup. On first install
+`background.js` opens the Settings page, and the popup footer shows an
+"Add free Gemini key" link when no key is saved. README and screenshots should
+show Gemini output, never Basic-mode text ("adhyay"-style Hindi puts users off).
+
 `handleTranslateBatch()` picks the mode and always returns a `warning` field
 (`"no-key"` / `"gemini-failed"`) alongside results. The fallback is deliberately
 **not silent** — the content script surfaces it in the status pill, because a

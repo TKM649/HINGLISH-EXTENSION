@@ -191,10 +191,21 @@ async function renderMeta() {
   // Footer mein ek hi line — poora card popup ko bahut lamba bana raha tha.
   // Detail Settings page pe hai, yahan sirf yaad dilaane bhar ka.
   if (geminiApiKey) {
-    metaInfo.innerHTML = `<b>Gemini</b> · ${count} today`;
+    const b = document.createElement("b");
+    b.textContent = "Gemini";
+    metaInfo.replaceChildren(b, ` · ${count} today`);
     metaInfo.title = "Using Gemini for natural, conversational Hinglish.";
   } else {
-    metaInfo.innerHTML = `<b>Basic</b> · no key`;
-    metaInfo.title = "Using Google Translate. Add a free Gemini key in Settings for much better quality.";
+    // Bina key ke Basic mode bas backup hai — yahan se seedha key wale page pe bhejo.
+    const link = document.createElement("a");
+    link.href = "#";
+    link.className = "meta-cta";
+    link.textContent = "Add free Gemini key →";
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      chrome.runtime.openOptionsPage();
+    });
+    metaInfo.replaceChildren(link);
+    metaInfo.title = "Basic mode is a limited backup. A free Gemini key gives natural, conversational Hinglish.";
   }
 }
