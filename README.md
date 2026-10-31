@@ -1,206 +1,217 @@
 <p align="center">
-  <img src="docs/images/banner.svg" alt="Hinglish Reader: English web pages and PDFs in easy Hinglish" width="100%">
+  <img src="docs/images/banner.svg" alt="Hinglish Reader: read English web pages and PDFs in easy, everyday Hinglish" width="100%">
 </p>
 
 <p align="center">
-  <b>English web pages aur PDF books ko aasaan, roz-marra wali Hinglish mein padhiye.</b><br>
-  Free Chrome extension. Koi account nahi, koi credit card nahi.
+  <img alt="Chrome extension" src="https://img.shields.io/badge/Chrome-extension-4f46e5?logo=googlechrome&logoColor=white">
+  <img alt="Manifest V3" src="https://img.shields.io/badge/Manifest-V3-4f46e5">
+  <img alt="Price: free" src="https://img.shields.io/badge/price-free-16a34a">
+  <img alt="License: GPL-3.0" src="https://img.shields.io/badge/license-GPL--3.0-2563eb">
 </p>
 
 <p align="center">
-  <a href="#install-kaise-karein-5-minute">Install</a> ·
-  <a href="#use-kaise-karein">Use</a> ·
-  <a href="#behtar-hinglish-ke-liye-free-gemini-key-optional">Gemini key</a> ·
-  <a href="#privacy-aapka-data-kahan-jaata-hai">Privacy</a> ·
-  <a href="#kuch-gadbad-ho-to">Help</a>
+  <b>Read any English web page or PDF book in easy, everyday Hinglish.</b><br>
+  No account. No credit card. One click to convert, one click to go back.
 </p>
-
----
-
-## Yeh kya karta hai
-
-- **Web pages:** kisi bhi English article, blog ya news page par ek click, aur text Hinglish mein badal jaata hai. Links, bold aur images apni jagah rehte hain.
-- **PDF books:** apni PDF drag-drop kijiye, page-by-page Hinglish mein padhiye. Contents, dark mode, aur last page yaad rehta hai.
-- **Right-click:** koi bhi line select kijiye, right-click → **Read in Hinglish**.
-- **Ek click mein wapas:** "Restore original" dabaate hi page bilkul pehle jaisa.
 
 <p align="center">
-  <img src="docs/images/popup.png" alt="Hinglish Reader popup" width="300">
+  <a href="#install-in-5-minutes">Install</a> ·
+  <a href="#how-to-use">How to use</a> ·
+  <a href="#better-hinglish-with-a-free-gemini-key-optional">Gemini key</a> ·
+  <a href="#privacy">Privacy</a> ·
+  <a href="#troubleshooting">Troubleshooting</a>
 </p>
 
 ---
 
-## Install kaise karein (5 minute)
-
-Yeh extension abhi Chrome Web Store par nahi hai, isliye isse ek baar haath se install karna padta hai. Neeche ke 6 steps follow kijiye, kisi coding ki zarurat nahi.
-
-**Step 1: File download kijiye**
-
-1. Is page ke upar hare (green) rang ka **`<> Code`** button dabaiye.
-2. **Download ZIP** par click kijiye. Ek `.zip` file aapke Downloads folder mein aa jaayegi.
-
-**Step 2: ZIP kholiye (unzip)**
-
-1. Windows: ZIP file par right-click → **Extract All…** → **Extract**.
-2. Mac: ZIP file par double-click kijiye.
-3. Jo folder bana, usse kisi pakki jagah rakh dijiye, jaise **Documents** mein.
-
-> ⚠️ **Is folder ko baad mein delete ya move mat kijiye.** Chrome extension ko isi folder se chalata hai. Folder hata to extension bhi band.
-
-**Step 3: Chrome ka extensions page kholiye**
-
-Chrome ke address bar mein yeh type kijiye aur Enter dabaiye:
-
-```
-chrome://extensions
-```
-
-**Step 4: Developer mode ON kijiye**
-
-Page ke **top-right corner** mein **Developer mode** ka toggle ON kijiye. (Yeh sirf "khud ka folder load karne" ki permission hai, isse aapke Chrome mein kuch aur nahi badalta.)
-
-**Step 5: Folder load kijiye**
-
-1. Upar-left mein **Load unpacked** button dabaiye.
-2. Step 2 wala folder chuniye. **Sahi folder wahi hai jiske andar `manifest.json` file dikhe.**
-3. **Select Folder** dabaiye.
-
-> 💡 Windows mein aksar folder ke andar same naam ka ek aur folder hota hai (`hinglish-extension-main` → `hinglish-extension-main`). Andar wala chuniye, jisme `manifest.json` hai.
-
-**Step 6: Toolbar mein pin kijiye**
-
-1. Chrome ke upar-right mein **puzzle (🧩) icon** dabaiye.
-2. **Hinglish Reader** ke saamne **pin 📌** dabaiye.
-
-Ho gaya. Ab toolbar mein ek purple **H** icon dikhega. ✅
-
----
-
-## Use kaise karein
-
-**Kisi bhi English web page par**
-
-1. Toolbar mein **H** icon dabaiye.
-2. **Convert to Hinglish** dabaiye.
-3. Jo screen par hai woh pehle badlega. Neeche scroll karte jaiye, aage ka text bhi badalta jaayega.
-4. Page ke neeche-right corner mein ek chhota button dikhega jo batata hai kya chal raha hai. Usse dabaane par original wapas aa jaata hai.
-
-**PDF book ke liye**
-
-1. **H** icon → **Open PDF reader**.
-2. Apni PDF file us page par drag kijiye, ya **Choose file** se chuniye.
-3. Jo page kholenge, wahi Hinglish mein badlega (poori book ek saath nahi, taaki free limit bachi rahe).
-
-**Sirf ek line ke liye**
-
-Text select kijiye → right-click → **Read in Hinglish**.
-
----
-
-## Behtar Hinglish ke liye: free Gemini key (optional)
-
-Bina key ke bhi extension chalta hai (**Basic mode**, Google Translate se). Par Basic mode thodi kitaabi Hindi deta hai, jaise "prishth", "margdarshika". **Asli, bol-chaal wali Hinglish** ke liye Google ki free Gemini key lagaiye. 2 minute lagte hain, card nahi maangta.
-
-1. **H** icon → upar-right mein **Settings**.
-2. [aistudio.google.com/apikey](https://aistudio.google.com/apikey) kholiye aur apne Google account se login kijiye.
-3. **Create API key** dabaiye, key copy kijiye.
-4. Settings page mein paste kijiye → **Save key** → **Test key**.
-
-"Everything works" dikhe to aap ready hain.
+## How it works
 
 <p align="center">
-  <img src="docs/images/settings.png" alt="Settings page jahan Gemini key daalte hain" width="560">
+  <img src="docs/images/how-it-works.svg" alt="1. Open any English page. 2. Click Convert. 3. Read in Hinglish." width="100%">
 </p>
 
-**Paise ka sawaal nahi:** free key par billing hoti hi nahi. Roz ki free limit khatam ho jaaye to extension apne aap Basic mode par chala jaata hai, page kabhi khaali nahi rehta. Limit roz **midnight Pacific time** par reset hoti hai (India mein dopahar lagbhag 12:30 ya 1:30 baje).
+## Features
 
-> 🔒 **Apni key kisi ko mat dijiye** aur kahin post mat kijiye. Key sirf aapke laptop ke Chrome mein save hoti hai.
+- **Web pages.** Convert any English article, blog or news page. Links, bold text and images stay where they were.
+- **PDF books.** Drop in a PDF and read it page by page, with a Contents menu, dark mode, and your last page remembered.
+- **Right-click.** Select any text, right-click, and choose **Read in Hinglish**.
+- **Instant undo.** **Restore original** puts the page back exactly as it was.
+- **Safe by default.** Never runs on banking, payment or login pages.
+
+<table>
+  <tr>
+    <td width="32%" align="center"><img src="docs/images/popup.png" alt="Toolbar popup" width="260"><br><sub>Toolbar popup</sub></td>
+    <td width="68%" align="center"><img src="docs/images/pdf-reader.png" alt="PDF reader in dark mode" width="560"><br><sub>PDF reader, dark mode (Basic mode output, without a Gemini key)</sub></td>
+  </tr>
+</table>
 
 ---
 
-## Privacy: aapka data kahan jaata hai
+## Install in 5 minutes
 
-| Kya | Kahan jaata hai |
+Hinglish Reader is not on the Chrome Web Store yet, so you install it once by hand. No coding needed.
+
+### Step 1: Download
+
+1. At the top of this page, click the green **`<> Code`** button.
+2. Click **Download ZIP**.
+
+### Step 2: Unzip and keep the folder
+
+1. **Windows:** right-click the ZIP file, choose **Extract All…**, then **Extract**.
+   **Mac:** double-click the ZIP file.
+2. Move the new folder somewhere permanent, such as **Documents**.
+
+> [!WARNING]
+> Don't delete or move this folder later. Chrome runs the extension from it, so removing the folder removes the extension.
+
+### Step 3: Load it into Chrome
+
+1. Type `chrome://extensions` into Chrome's address bar and press **Enter**.
+2. Turn on **Developer mode** (top-right corner). **①**
+3. Click **Load unpacked** (top-left). **②**
+4. Select the folder from Step 2 and click **Select Folder**. The right folder is the one that contains `manifest.json`.
+5. **Hinglish Reader** now appears in your list. **③**
+
+<p align="center">
+  <img src="docs/images/install-chrome.png" alt="Chrome extensions page: 1 Developer mode, 2 Load unpacked, 3 Hinglish Reader card" width="100%">
+</p>
+
+> [!TIP]
+> On Windows the ZIP often creates a folder inside a folder with the same name (`hinglish-extension-main` → `hinglish-extension-main`). Choose the inner one, the one with `manifest.json` inside.
+
+### Step 4: Pin it to your toolbar
+
+Click the puzzle icon 🧩 at the top-right of Chrome, then the pin 📌 next to **Hinglish Reader**. A purple **H** icon appears in your toolbar. You're done. ✅
+
+---
+
+## How to use
+
+**On a web page**
+
+1. Open any English page and click the **H** icon.
+2. Click **Convert to Hinglish**.
+3. What's on screen converts first. Keep scrolling and the rest follows.
+4. A small button at the bottom-right of the page shows progress. Click it to restore the original.
+
+**With a PDF book**
+
+1. Click the **H** icon, then **Open PDF reader**.
+2. Drag your PDF onto the page, or click **Choose PDF**.
+3. Each page converts when you open it, so your free quota lasts longer.
+
+**For a single line**
+
+Select the text, right-click, and choose **Read in Hinglish**.
+
+---
+
+## Better Hinglish with a free Gemini key (optional)
+
+Without a key, Hinglish Reader uses **Basic mode** (Google Translate). Basic mode works, but it tends to produce formal, textbook Hindi. For **natural, conversational Hinglish**, add a free Google Gemini key. It takes about 2 minutes and needs no credit card.
+
+1. Click the **H** icon, then **Settings** (top-right).
+2. Open [aistudio.google.com/apikey](https://aistudio.google.com/apikey) and sign in with your Google account.
+3. Click **Create API key** and copy it.
+4. Paste it into Settings, click **Save key**, then **Test key**.
+
+When you see **Everything works**, you're ready.
+
+<p align="center">
+  <img src="docs/images/settings.png" alt="Settings page where you paste your Gemini key" width="560">
+</p>
+
+- **It stays free.** Free keys have no billing. If you reach the daily limit, the extension switches to Basic mode on its own, so pages never go blank.
+- **Daily reset.** The limit resets at midnight Pacific time (around 12:30 PM or 1:30 PM in India). The extension shows the exact reset time in your own time zone.
+- **Keep your key private.** Never share it or post it online. It's stored only in Chrome on your computer.
+
+---
+
+## Privacy
+
+| What | Where it goes |
 |---|---|
-| Aapki settings aur Gemini key | Sirf aapke laptop par (Chrome ke andar). Kahin sync nahi hoti. |
-| Jo text aap convert karte hain | Translate hone ke liye Google ke paas (Google Translate, ya key ho to Gemini). |
-| Aapki browsing, history, passwords | Kahin nahi. Extension sirf usi page ko padhta hai jahan aap khud button dabaate hain. |
+| Your settings and Gemini key | Only your computer, inside Chrome. Never synced or uploaded. |
+| Text you choose to convert | Google, for translation (Google Translate, or Gemini if you added a key). |
+| Your browsing, history and passwords | Nowhere. The extension only reads a page when you click Convert. |
 
-Is extension ka apna koi server nahi hai, koi tracking ya analytics nahi.
+Hinglish Reader has no server of its own, no tracking and no analytics.
 
-> ⚠️ **Zaroori:** free Gemini key par Google bheja gaya text apne products sudhaarne ke liye use kar sakta hai, aur insaan reviewers use padh sakte hain ([Google ki terms](https://ai.google.dev/gemini-api/terms)). Isliye **private emails, bank statements ya personal documents free key se convert mat kijiye.**
-
----
-
-## Kahan nahi chalega (aur kyun)
-
-- **Bank aur payment sites** (netbanking, Paytm, PhonePe, PayPal waghera): safety ke liye hamesha band.
-- **Login ya checkout pages** jahan password box ho: safety ke liye band.
-- **`chrome://` pages aur Chrome Web Store:** Chrome khud allow nahi karta.
-- **Scan ki hui ya photo wali PDFs:** inme text hota hi nahi, sirf tasveer. Jis PDF mein aap text select kar paate hain, wahi chalegi.
-
-Kisi site par kabhi na chalana ho: **H** icon → **Disable on this site**. Wapas on karna ho to Settings → Disabled sites.
+> [!IMPORTANT]
+> On the free Gemini tier, Google may use the text you send to improve its products, and human reviewers may read it ([Gemini API terms](https://ai.google.dev/gemini-api/terms)). **Don't convert private emails, bank statements or personal documents with a free key.**
 
 ---
 
-## Kuch gadbad ho to
+## Where it won't run
 
-| Problem | Hal |
+- **Banking and payment sites** (net banking, Paytm, PhonePe, PayPal and similar). Always off, for your safety.
+- **Login and checkout pages** that have a password field. Always off, for your safety.
+- **`chrome://` pages and the Chrome Web Store.** Chrome doesn't allow extensions there.
+- **Scanned or photo PDFs.** They contain images, not text. If you can select the text in a PDF, it will work.
+
+To turn it off on any site: click the **H** icon, then **Disable on this site**. Turn it back on from **Settings → Disabled sites**.
+
+---
+
+## Troubleshooting
+
+| Problem | Fix |
 |---|---|
-| "Manifest file is missing or unreadable" | Galat folder chuna. Woh folder chuniye jiske andar `manifest.json` hai (Step 5 ka tip). |
-| Extension achanak gayab ho gaya | Folder delete ya move ho gaya. Step 2 se dobara kijiye. |
-| Button dabaya, kuch nahi badla | Page ek baar reload kijiye, phir dobara **Convert to Hinglish**. |
-| Corner mein "Basic mode" ya "Limit reached" | Key nahi hai ya aaj ki free limit khatam. Kal tak Basic mode chalega. |
+| "Manifest file is missing or unreadable" | You picked the wrong folder. Choose the one that contains `manifest.json` (see the tip in Step 3). |
+| The extension disappeared | The folder was moved or deleted. Repeat the install from Step 1. |
+| Nothing changed after clicking Convert | Reload the page and click **Convert to Hinglish** again. |
+| The corner button says "Basic mode" or "Limit reached" | No Gemini key, or today's free limit is used up. Basic mode keeps working until it resets. |
+
+## Updating
+
+1. Download the new ZIP (Steps 1 and 2).
+2. Replace the files in your existing folder with the new ones. Keep the folder in the same place.
+3. Open `chrome://extensions` and click the reload icon ↻ on Hinglish Reader.
+
+Your key and settings are kept.
+
+## Uninstalling
+
+Open `chrome://extensions`, find Hinglish Reader, and click **Remove**. You can then delete the folder. This also deletes your saved key and settings.
 
 ---
 
-## Naya version kaise lein
+## Good to know
 
-1. Upar wale **Step 1 aur 2** dobara kijiye (nayi ZIP).
-2. Purane folder ki files nayi files se **replace** kar dijiye (folder ki jagah wahi rakhiye).
-3. `chrome://extensions` kholiye → Hinglish Reader par **reload ↻** icon dabaiye.
+- Not every sentence will be perfect, especially very technical or very long ones.
+- Basic mode (no key) will always sound more formal. Natural Hinglish needs a Gemini key.
+- Tested on desktop Google Chrome.
 
-Aapki key aur settings bachi rehti hain.
-
-## Hataana ho to
-
-`chrome://extensions` → Hinglish Reader → **Remove**. Phir folder bhi delete kar sakte hain. Isse aapki key aur saari settings bhi mit jaati hain.
-
----
-
-## Ek imaandaar baat
-
-- Har sentence perfect nahi hoga, khaas kar bahut technical ya lambe sentences mein.
-- Basic mode (bina key) hamesha thoda kitaabi rahega. Achhi Hinglish sirf Gemini key se milti hai.
-- Abhi sirf laptop/desktop wale Google Chrome par test hua hai.
+Found a problem or have an idea? [Open an issue](https://github.com/TKM649/HINGLISH-EXTENSION/issues).
 
 ---
 
 <details>
-<summary><b>Developers ke liye</b> (code dekhna ya badalna ho)</summary>
+<summary><b>For developers</b></summary>
 
 <br>
 
-Koi build step nahi. Is folder ki files hi Chrome load karta hai. `package.json` sirf tests ke liye `jsdom` deta hai, extension ki koi runtime dependency nahi.
+There is no build step: Chrome loads the files in this folder as they are. `package.json` only provides `jsdom` for the test suite; the extension has no runtime dependencies.
 
 ```
 manifest.json     Extension config (Manifest V3)
-background.js     Saari network calls (Google Translate + Gemini), model choice, context menu
-gemini.js         Gemini prompt + response parsing (pure)
-glossary.js       Basic mode ki word list
-hinglishify.js    Glossary rules apply karta hai (pure)
+background.js     All network calls (Google Translate + Gemini), model choice, context menu
+gemini.js         Gemini prompt and response parsing (pure)
+glossary.js       Word list for Basic mode
+hinglishify.js    Applies the glossary rules (pure)
 cache.js          Translation cache (memory + chrome.storage.local)
-safety.js         Kahan extension band rahe (pure)
-content.js/css    Page ke andar: text nikaalna, viewport queue, DOM update, restore
+safety.js         Where the extension must stay off (pure)
+content.js/css    In-page logic: text extraction, viewport queue, DOM updates, restore
 popup.html/js     Toolbar popup
 options.html/js   Settings page
 reader.html/js    PDF reader
-pdf-text.js       PDF text ko headings/paragraphs mein jodta hai (pure)
-markers.js        Formatting markers ka parser (pure)
+pdf-text.js       Rebuilds headings and paragraphs from PDF text (pure)
+markers.js        Formatting-marker parser (pure)
 vendor/           Mozilla PDF.js (prebuilt, Apache-2.0, unmodified)
 ```
 
-Tests (sab Node mein chalte hain, Chrome nahi chahiye):
+Run the tests (Node only, no browser needed):
 
 ```bash
 npm install
@@ -210,6 +221,18 @@ npm install
 npm test
 ```
 
-Architecture ki poori detail [CLAUDE.md](CLAUDE.md) mein hai.
+Architecture notes are in [CLAUDE.md](CLAUDE.md).
 
 </details>
+
+---
+
+## License
+
+Copyright © 2026 Tarun ([@TKM649](https://github.com/TKM649)).
+
+Hinglish Reader is free software under the [GNU General Public License v3.0](LICENSE). You may use, study, share and modify it. If you distribute a modified version, it must stay open source under the same license and keep this copyright notice.
+
+The name **"Hinglish Reader"** and the **H** logo are not licensed for reuse: forks must use their own name and logo (GPL-3.0 section 7(e)).
+
+Bundled [PDF.js](https://github.com/mozilla/pdf.js) is © Mozilla Foundation, licensed under Apache-2.0.
